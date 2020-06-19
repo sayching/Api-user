@@ -1,13 +1,8 @@
-const express = require('express')
-const port = process.env.PORT
-const userRouter = require('./router/users')
-require('./db/database')
+import './config/database';
+import server from './config/server';
 
-const app = express()
 
-app.use(express.json())
-app.use(userRouter)
-
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`)
-})
+const PORT = process.env.PORT || 4000;
+server.listen(PORT, () => {
+  console.log(`app running on port ${PORT}`);
+});
