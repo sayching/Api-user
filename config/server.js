@@ -5,7 +5,6 @@ import setRoutes from "./routes";
 import fileUpload from "express-fileupload";
 import dotenv from "dotenv"
 
-
 dotenv.config();
 
 const server = express();
