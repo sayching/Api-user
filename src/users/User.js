@@ -3,68 +3,39 @@ import mongoose from "mongoose";
 class User {
     constructor(model) {
         this.model = model;
-        this.getAll = this.getAll.bind(this);
+        this.getAll = this.get.bind(this);
         this.insert = this.insert.bind(this);
 
       }
     
-      async getAll(query) {
-        let { skip, limit } = query;
-    
-        skip = skip ? Number(skip) : 0;
-        limit = limit ? Number(limit) : 10;
-    
-        delete query.skip;
-        delete query.limit;
-    
-        if (query._id) {
-          try {
-            query._id = new mongoose.mongo.ObjectId(query._id);
-          } catch (error) {
-            console.log("not able to generate mongoose id with content", query._id);
-          }
+      async get(req, res) {
+        // View logged in user profile
+            res.send(req.user)
         }
     
-        try {
-          let items = await this.model
-            .find(query)
-            .skip(skip)
-            .limit(limit);
-          let total = await this.model.count();
-    
-          return {
-            error: false,
-            statusCode: 200,
-            data: items,
-            total
-          };
-        } catch (errors) {
-          return {
-            error: true,
-            statusCode: 500,
-            errors
-          };
+        async insert(req, res) {
+        // Log user out of the application
+            try {
+                req.user.tokens = req.user.tokens.filter((token) => {
+                    return token.token != req.token
+                })
+                await req.user.save()
+                res.send()
+            } catch (error) {
+                res.status(500).send(error)
+            }
         }
-      }
     
-      async insert(data) {
-        try {
-          let item = await this.model.create(data);
-          if (item)
-            return {
-              error: false,
-              item
-            };
-        } catch (error) {
-          console.log("error", error);
-          return {
-            error: true,
-            statusCode: 500,
-            message: error.errmsg || "Not able to create item",
-            errors: error.errors
-          };
+        async insert(req, res) {
+        // Log user out of all devices
+            try {
+                req.user.tokens.splice(0, req.user.tokens.length)
+                await req.user.save()
+                res.send()
+            } catch (error) {
+                res.status(500).send(error)
+            }
         }
-      }
       
   }
   

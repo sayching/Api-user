@@ -2,7 +2,7 @@ class Controller {
 
     constructor(user) {
       this.user = user;
-      this.getAll = this.get.bind(this);
+      this.get = this.get.bind(this);
       this.insert = this.insert.bind(this);
     }
   
